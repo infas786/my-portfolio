@@ -4,12 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
   <title>Mohamed Infas Inayathullah · Full Stack Engineer</title>
-  <!-- Bootstrap 5 + Icons + Google Fonts (Inter) -->
+  <!-- Bootstrap 5 + Icons + Google Fonts (Inter) + AOS animation -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -20,23 +21,21 @@
       padding: 2rem 1rem;
       min-height: 100vh;
     }
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-    /* colorful cards */
+    .container { max-width: 1200px; margin: 0 auto; }
+    
+    /* colorful cards with glassmorphism */
     .card {
       border: none;
       border-radius: 28px;
-      background: rgba(255,255,255,0.82);
-      backdrop-filter: blur(4px);
+      background: rgba(255,255,255,0.75);
+      backdrop-filter: blur(6px);
       box-shadow: 0 20px 40px -12px rgba(0,20,40,0.12), 0 4px 18px rgba(0,0,0,0.03);
-      transition: transform 0.2s ease, box-shadow 0.25s;
-      border: 1px solid rgba(255,255,255,0.6);
+      transition: transform 0.25s ease, box-shadow 0.3s ease;
+      border: 1px solid rgba(255,255,255,0.5);
     }
     .card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 28px 48px -16px rgba(79, 70, 229, 0.18);
+      transform: translateY(-4px);
+      box-shadow: 0 30px 50px -16px rgba(79, 70, 229, 0.2);
     }
     .section-title {
       font-weight: 700;
@@ -70,23 +69,22 @@
       border: 1px solid rgba(139, 92, 246, 0.15);
     }
     .skill-tag {
-      background: white;
+      background: rgba(255,255,255,0.7);
       border: 1px solid #e5e7eb;
       color: #1e1b4b;
       font-weight: 500;
       padding: 0.5rem 1.2rem;
       border-radius: 40px;
       font-size: 0.9rem;
-      transition: all 0.15s ease;
+      transition: all 0.2s ease;
       box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-      background: rgba(255,255,255,0.7);
     }
     .skill-tag:hover {
       background: linear-gradient(135deg, #8b5cf6, #ec4899);
       border-color: #8b5cf6;
       color: white;
       box-shadow: 0 8px 18px -6px rgba(139, 92, 246, 0.35);
-      transform: scale(1.02);
+      transform: scale(1.03) translateY(-2px);
     }
     .profile-img {
       width: 140px;
@@ -96,7 +94,10 @@
       border: 4px solid white;
       box-shadow: 0 12px 28px -8px rgba(79, 70, 229, 0.25);
       background: #eef4ff;
+      transition: transform 0.3s ease;
     }
+    .profile-img:hover { transform: scale(1.04) rotate(-2deg); }
+    
     .icon-circle {
       width: 44px;
       height: 44px;
@@ -107,24 +108,26 @@
       justify-content: center;
       color: #6d28d9;
       font-size: 1.3rem;
-      transition: 0.15s;
+      transition: 0.2s;
     }
     .icon-circle:hover {
       background: linear-gradient(135deg, #8b5cf6, #ec4899);
       color: white;
+      transform: scale(1.1) rotate(5deg);
     }
     .project-card {
       border-left: 5px solid #8b5cf6;
-      background: rgba(255,255,255,0.7);
+      background: rgba(255,255,255,0.65);
       border-radius: 20px;
       padding: 1.5rem 1.5rem;
-      transition: 0.2s;
+      transition: all 0.3s ease;
       box-shadow: 0 6px 14px rgba(0,0,0,0.02);
     }
     .project-card:hover {
-      background: rgba(255,255,255,0.9);
-      box-shadow: 0 16px 28px -10px rgba(79, 70, 229, 0.12);
+      background: rgba(255,255,255,0.85);
+      box-shadow: 0 16px 28px -10px rgba(79, 70, 229, 0.15);
       border-left-color: #ec4899;
+      transform: translateX(6px);
     }
     .project-card.featured {
       background: linear-gradient(135deg, #faf5ff, #fdf2f8);
@@ -146,9 +149,7 @@
       color: #8b5cf6;
       font-weight: 700;
     }
-    .text-muted-soft {
-      color: #4c4b6b;
-    }
+    .text-muted-soft { color: #4c4b6b; }
     .bg-soft-gradient {
       background: linear-gradient(135deg, #faf5ff, #ede9fe, #fce7f3);
     }
@@ -159,23 +160,21 @@
       height: 2px;
       border: none;
     }
-    .readable-line {
-      line-height: 1.7;
-    }
-    .fs-small {
-      font-size: 0.9rem;
-    }
+    .readable-line { line-height: 1.7; }
+    .fs-small { font-size: 0.9rem; }
+    
     .btn-primary-custom {
       background: linear-gradient(135deg, #8b5cf6, #ec4899);
       border: none;
       color: white;
       font-weight: 600;
-      transition: all 0.2s;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 12px rgba(139, 92, 246, 0.25);
     }
     .btn-primary-custom:hover {
       background: linear-gradient(135deg, #7c3aed, #db2777);
-      transform: scale(1.02);
-      box-shadow: 0 8px 20px -8px rgba(139, 92, 246, 0.4);
+      transform: scale(1.03) translateY(-2px);
+      box-shadow: 0 8px 24px -6px rgba(139, 92, 246, 0.4);
       color: white;
     }
     .btn-outline-custom {
@@ -183,11 +182,13 @@
       color: #6d28d9;
       background: transparent;
       font-weight: 600;
+      transition: all 0.25s ease;
     }
     .btn-outline-custom:hover {
       background: linear-gradient(135deg, #8b5cf6, #ec4899);
       color: white;
       border-color: transparent;
+      transform: scale(1.03) translateY(-2px);
     }
     .badge.bg-white {
       background: rgba(255,255,255,0.8) !important;
@@ -200,21 +201,18 @@
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
-    .icon-bg-gradient {
-      background: linear-gradient(135deg, #8b5cf6, #ec4899);
-      color: white;
-      padding: 0.25rem 0.5rem;
-      border-radius: 12px;
+    
+    /* animations */
+    [data-aos] {
+      pointer-events: none;
+    }
+    [data-aos].aos-animate {
+      pointer-events: auto;
     }
 
     @media (max-width: 576px) {
-      .section-title {
-        font-size: 1.6rem;
-      }
-      .profile-img {
-        width: 100px;
-        height: 100px;
-      }
+      .section-title { font-size: 1.6rem; }
+      .profile-img { width: 100px; height: 100px; }
     }
   </style>
 </head>
@@ -222,14 +220,14 @@
 <div class="container">
 
   <!-- HEADER / HERO with photo -->
-  <div class="row g-4 align-items-center mb-5">
+  <div class="row g-4 align-items-center mb-5" data-aos="fade-up" data-aos-duration="800">
     <div class="col-md-8">
       <div class="d-flex flex-wrap align-items-center gap-3 mb-2">
         <span class="badge-soft"><i class="bi bi-check-circle-fill me-1" style="color:#7c3aed;"></i> Open to opportunities</span>
         <span class="badge-soft"><i class="bi bi-geo-alt-fill me-1" style="color:#7c3aed;"></i> Ratmalana, Sri Lanka</span>
       </div>
       <h1 class="display-4 fw-bold" style="letter-spacing: -0.03em; color: #1e1b4b;">Mohamed Infas <br class="d-md-none">Inayathullah</h1>
-      <p class="fs-4 fw-semibold text-gradient">Full Stack Software Engineer</p>
+      <p class="fs-4 fw-semibold text-gradient">Senior Full Stack Software Engineer</p>
       <p class="lead readable-line text-muted-soft" style="max-width: 640px;">4+ years of experience designing, developing, and maintaining enterprise-grade web applications &amp; backend systems. Delivering end-to-end solutions for business-critical platforms.</p>
       <div class="d-flex flex-wrap gap-3 mt-3">
         <a href="mailto:infasinyathullah786@gmail.com" class="btn btn-primary-custom rounded-pill px-4 py-2"><i class="bi bi-envelope-fill me-2"></i>infasinyathullah786@gmail.com</a>
@@ -256,7 +254,7 @@
   </div>
 
   <!-- QUICK NOTE / ACCESSIBILITY -->
-  <div class="card p-3 mb-4 bg-soft-gradient border-0" style="border-radius: 40px; border: 1px solid rgba(139,92,246,0.15);">
+  <div class="card p-3 mb-4 bg-soft-gradient border-0" style="border-radius: 40px; border: 1px solid rgba(139,92,246,0.15);" data-aos="fade-up" data-aos-delay="100">
     <div class="d-flex align-items-center flex-wrap gap-3">
       <i class="bi bi-info-circle-fill fs-4" style="color: #8b5cf6;"></i>
       <span class="fw-medium" style="color:#4c1d95;">I have a mild central vision condition (scotoma) — for interviews, verbal instructions or audio-based questions are preferable.</span>
@@ -270,14 +268,14 @@
     <div class="col-lg-5">
       
       <!-- SUMMARY -->
-      <div class="card p-4 mb-4">
+      <div class="card p-4 mb-4" data-aos="fade-right" data-aos-duration="700">
         <h5 class="fw-bold section-title" style="font-size:1.4rem;">Summary</h5>
-        <p class="readable-line text-muted-soft mt-2">Full Stack Software Engineer with 4+ years of experience in enterprise-grade web applications and backend systems. Strong expertise in PHP, JavaScript, MySQL, and delivering complete end-to-end solutions. Skilled in building scalable systems, handling structured data, and maintaining reliable performance.</p>
-        <p class="readable-line text-muted-soft mt-1">Self-motivated with strong analytical thinking, attention to detail, and hands-on experience in real-world operational systems.</p>
+        <p class="readable-line text-muted-soft mt-2">Senior Full Stack Software Engineer with 4+ years of experience in enterprise-grade web applications and backend systems. Strong expertise in PHP, JavaScript, MySQL, and delivering complete end-to-end solutions. Skilled in building scalable systems, handling structured data, and maintaining reliable performance.</p>
+        <p class="readable-line text-muted-soft mt-1">Self-motivated with strong analytical thinking, attention to detail, and hands-on experience in real-world operational systems. Actively involved in technical decision-making and architecture planning.</p>
       </div>
 
       <!-- SKILLS -->
-      <div class="card p-4 mb-4">
+      <div class="card p-4 mb-4" data-aos="fade-right" data-aos-delay="100">
         <h5 class="fw-bold section-title" style="font-size:1.4rem;">Technical Skills</h5>
         <div class="d-flex flex-wrap gap-2 mt-3">
           <span class="skill-tag">PHP</span>
@@ -296,7 +294,7 @@
       </div>
 
       <!-- EDUCATION + LANGUAGES -->
-      <div class="card p-4 mb-4">
+      <div class="card p-4 mb-4" data-aos="fade-right" data-aos-delay="200">
         <h5 class="fw-bold section-title" style="font-size:1.4rem;">Education</h5>
         <div class="mt-2">
           <div class="d-flex align-items-start gap-2">
@@ -331,7 +329,7 @@
       </div>
 
       <!-- REFERENCE -->
-      <div class="card p-4">
+      <div class="card p-4" data-aos="fade-right" data-aos-delay="300">
         <h5 class="fw-bold section-title" style="font-size:1.4rem;">Reference</h5>
         <p class="mt-2 text-muted-soft">Available upon request · <i class="bi bi-person-check-fill" style="color:#8b5cf6;"></i> Professional references from Powersoft Pvt Ltd and previous engagements.</p>
       </div>
@@ -341,9 +339,9 @@
     <div class="col-lg-7">
 
       <!-- EXPERIENCE -->
-      <div class="card p-4 mb-4">
+      <div class="card p-4 mb-4" data-aos="fade-left" data-aos-duration="700">
         <h5 class="fw-bold section-title" style="font-size:1.4rem;">Experience</h5>
-        <!-- Senior role -->
+        <!-- Senior role 1: Powersoft -->
         <div class="mt-3">
           <div class="d-flex justify-content-between align-items-start flex-wrap">
             <span class="fw-bold fs-5" style="color:#1e1b4b;">Senior Full Stack Software Engineer</span>
@@ -358,6 +356,23 @@
             <li>Resolve production issues and provide continuous system support.</li>
             <li>Collaborate with teams to deliver secure, maintainable software solutions.</li>
             <li>Mentor junior engineers and enforce best coding practices.</li>
+            <li><strong>Key decision-making:</strong> Actively involved in architectural decisions, technology selection, and system design for enterprise clients.</li>
+          </ul>
+        </div>
+        <hr>
+        <!-- Senior role 2: Mahallah360 -->
+        <div class="mt-3">
+          <div class="d-flex justify-content-between align-items-start flex-wrap">
+            <span class="fw-bold fs-5" style="color:#1e1b4b;">Senior Full Stack Developer</span>
+            <span class="badge-soft bg-white border" style="background:rgba(255,255,255,0.7);"><i class="bi bi-calendar-range me-1" style="color:#8b5cf6;"></i>2023 – Present</span>
+          </div>
+          <span class="fw-medium" style="color:#6d28d9;">Mahallah360 (Senior Developer, Decision-Making Role)</span>
+          <ul class="list-bullet mt-2 text-muted-soft readable-line">
+            <li>Lead developer for a comprehensive digital platform bridging traditional Islamic values with modern technology.</li>
+            <li>Architected and implemented core features including prayer time management, community updates, and mosque connectivity.</li>
+            <li>Integrated real-time prayer time calculations and notifications for multiple regions.</li>
+            <li>Built secure user authentication and community management modules.</li>
+            <li><strong>Key decision-making:</strong> Played a central role in technical strategy, feature prioritization, and system scalability planning.</li>
           </ul>
         </div>
         <hr>
@@ -371,11 +386,11 @@
         </div>
       </div>
 
-      <!-- KEY PROJECTS + FEATURED PROJECT -->
-      <div class="card p-4 mb-4">
+      <!-- KEY PROJECTS + FEATURED PROJECTS -->
+      <div class="card p-4 mb-4" data-aos="fade-left" data-aos-delay="100">
         <h5 class="fw-bold section-title" style="font-size:1.4rem;">Key Projects</h5>
 
-        <!-- Featured project: powersoftt.com -->
+        <!-- Featured project 1: powersoftt.com -->
         <div class="project-card featured mt-3">
           <div class="d-flex justify-content-between align-items-start flex-wrap">
             <h6 class="fw-bold"><i class="bi bi-star-fill me-2" style="color:#ec4899;"></i>Featured Project</h6>
@@ -390,6 +405,25 @@
             <li>Built role-based access control and reporting dashboards.</li>
             <li>Optimized queries and system performance.</li>
             <li>Provided production support and issue resolution.</li>
+            <li><strong>Decision-making:</strong> Led technical architecture decisions, database schema design, and integration strategies.</li>
+          </ul>
+        </div>
+
+        <!-- Featured project 2: mahallah360.com -->
+        <div class="project-card featured mt-3" style="border-left-color: #8b5cf6;">
+          <div class="d-flex justify-content-between align-items-start flex-wrap">
+            <h6 class="fw-bold"><i class="bi bi-star-fill me-2" style="color:#8b5cf6;"></i>Featured Project</h6>
+            <a href="https://mahallah360.com" target="_blank" class="btn btn-outline-custom btn-sm rounded-pill px-3 py-1">
+              <i class="bi bi-box-arrow-up-right me-1"></i> Visit mahallah360.com
+            </a>
+          </div>
+          <p class="fw-semibold mt-2" style="color:#4c1d95;">Mahallah360 – Digital Platform for Islamic Communities</p>
+          <ul class="list-bullet text-muted-soft readable-line">
+            <li>Senior developer responsible for core platform architecture and feature development.</li>
+            <li>Built prayer time management system with real-time calculations and notifications.</li>
+            <li>Developed community engagement features including announcements, event management, and user profiles.</li>
+            <li>Integrated secure payment systems for community donations and services.</li>
+            <li><strong>Decision-making:</strong> Drove technical strategy, scalability planning, and feature roadmap decisions.</li>
           </ul>
         </div>
 
@@ -413,12 +447,12 @@
       </div>
 
       <!-- ADDITIONAL NOTE -->
-      <div class="card p-4 bg-soft-gradient border-0" style="border-radius: 28px; border: 1px solid rgba(139,92,246,0.1);">
+      <div class="card p-4 bg-soft-gradient border-0" style="border-radius: 28px; border: 1px solid rgba(139,92,246,0.1);" data-aos="fade-left" data-aos-delay="200">
         <div class="d-flex gap-3 align-items-center flex-wrap">
           <i class="bi bi-person-workspace fs-2" style="color:#6d28d9;"></i>
           <div>
-            <span class="fw-semibold" style="color:#1e1b4b;">Full Stack · Problem Solver · System Optimizer</span>
-            <p class="text-muted-soft mt-1 mb-0 fs-small">Delivering secure, maintainable solutions with a focus on business impact.</p>
+            <span class="fw-semibold" style="color:#1e1b4b;">Senior Full Stack · Decision-Maker · System Architect</span>
+            <p class="text-muted-soft mt-1 mb-0 fs-small">Delivering secure, maintainable solutions with a focus on business impact and technical leadership.</p>
           </div>
         </div>
       </div>
@@ -428,17 +462,29 @@
 
   <!-- FOOTER -->
   <hr>
-  <footer class="d-flex flex-wrap justify-content-between align-items-center pt-2 pb-4">
+  <footer class="d-flex flex-wrap justify-content-between align-items-center pt-2 pb-4" data-aos="fade-up">
     <span class="text-muted-soft fs-small">© 2026 · Mohamed Infas Inayathullah</span>
     <div class="d-flex gap-3">
       <a href="mailto:infasinyathullah786@gmail.com" class="text-decoration-none" style="color:#6d28d9;"><i class="bi bi-envelope"></i></a>
       <a href="https://linkedin.com/in/infas-inayathullah-61275923b" target="_blank" class="text-decoration-none" style="color:#6d28d9;"><i class="bi bi-linkedin"></i></a>
       <a href="https://github.com/infas786" target="_blank" class="text-decoration-none" style="color:#1e1b4b;"><i class="bi bi-github"></i></a>
       <a href="https://powersoftt.com" target="_blank" class="text-decoration-none" style="color:#ec4899;" title="Powersoftt.com"><i class="bi bi-briefcase"></i></a>
+      <a href="https://mahallah360.com" target="_blank" class="text-decoration-none" style="color:#8b5cf6;" title="Mahallah360.com"><i class="bi bi-globe2"></i></a>
     </div>
   </footer>
 
 </div>
+
+<!-- AOS animation script -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+  AOS.init({
+    duration: 800,
+    once: true,
+    offset: 50,
+    easing: 'ease-out-cubic'
+  });
+</script>
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>

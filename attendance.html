@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-  <title>Training Muallimahs · Attendance</title>
+  <title>Training Muallimahs · Dual Attendance</title>
   <style>
     /* ----- GLOBAL RESET / BASE ----- */
     * {
@@ -13,24 +13,38 @@
     }
 
     body {
-      background: #f2f4f6;
+      background: #e8ebee;
       font-family: 'Segoe UI', Roboto, Arial, sans-serif;
       display: flex;
-      justify-content: center;
-      padding: 12px 8px;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px 12px;
       margin: 0;
       min-height: 100vh;
     }
 
-    /* ----- MAIN CARD (matches A4 feel) ----- */
-    .app-container {
+    /* ----- MAIN CONTAINER (holds both forms) ----- */
+    .app-wrapper {
       max-width: 1100px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    /* ----- INDIVIDUAL FORM CARD (matches A4 feel) ----- */
+    .form-card {
       width: 100%;
       background: white;
       box-shadow: 0 12px 30px rgba(0,0,0,0.08);
       border-radius: 12px;
-      padding: 16px 14px 24px;
+      padding: 16px 14px 20px;
       transition: all 0.2s;
+      page-break-after: always;  /* each form starts on new page when printing */
+    }
+
+    .form-card:last-child {
+      page-break-after: avoid;
     }
 
     /* ----- HEADER TITLE ----- */
@@ -66,9 +80,9 @@
       font-weight: 600;
       font-size: 15px;
       gap: 8px 12px;
-      flex-wrap: nowrap;          /* NEVER wrap – keeps row horizontal */
+      flex-wrap: nowrap;
       min-height: 44px;
-      height: 44px;              /* fixed height – identical on all devices */
+      height: 44px;
     }
 
     .info-row:last-child {
@@ -82,7 +96,6 @@
       flex-shrink: 0;
     }
 
-    /* ALL INPUTS in info rows – fixed height, same on mobile/desktop */
     .info-row input,
     .info-row input[type="date"] {
       flex: 1 1 auto;
@@ -96,9 +109,9 @@
       transition: 0.15s;
       min-width: 140px;
       color: #111;
-      height: 32px;              /* FIXED HEIGHT – never changes */
+      height: 32px;
       box-sizing: border-box;
-      max-height: 32px;          /* enforce max */
+      max-height: 32px;
     }
 
     .info-row input:focus {
@@ -174,21 +187,25 @@
       color: #000;
     }
 
-    /* ----- ACTION BUTTONS ----- */
+    /* ----- ACTION BUTTONS (single set below both forms) ----- */
     .action-bar {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
       gap: 12px 16px;
-      margin-top: 20px;
-      padding-top: 10px;
-      border-top: 1px solid #d0d4d8;
+      margin-top: 10px;
+      padding-top: 16px;
+      border-top: 2px solid #000;
+      background: white;
+      border-radius: 12px;
+      padding: 16px 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
     }
 
     .btn {
       background: white;
       border: 1.5px solid #1e1e1e;
-      padding: 10px 24px;
+      padding: 10px 28px;
       font-weight: 600;
       font-size: 15px;
       border-radius: 60px;
@@ -232,22 +249,22 @@
       color: white;
     }
 
-    /* ----- RESPONSIVE – KEEP HEIGHT IDENTICAL, only adjust font/padding ----- */
+    /* ----- RESPONSIVE – KEEP HEIGHT IDENTICAL ----- */
     @media (max-width: 750px) {
-      .app-container { padding: 12px 8px 20px; }
+      .form-card { padding: 12px 8px 16px; }
       .title-box { font-size: 17px; padding: 8px 4px; letter-spacing: 0.5px; }
       .info-row { 
         padding: 4px 8px; 
         font-size: 13px; 
         min-height: 40px;
-        height: 40px;            /* fixed – slightly smaller but consistent */
+        height: 40px;
         gap: 6px 10px;
       }
       .info-row .label { min-width: 90px; font-size: 13px; }
       .info-row input { 
         font-size: 13px; 
         padding: 4px 6px; 
-        height: 30px;            /* FIXED – same height for all inputs */
+        height: 30px;
         min-width: 100px;
         max-height: 30px;
       }
@@ -261,21 +278,21 @@
       }
       td .class-number { font-size: 13px; }
       .btn { 
-        padding: 8px 14px; 
+        padding: 8px 16px; 
         font-size: 13px; 
         min-width: 80px;
         flex: 1 0 80px;
       }
-      .action-bar { gap: 10px; }
+      .action-bar { gap: 10px; padding: 12px 14px; }
     }
 
     @media (max-width: 500px) {
-      .app-container { padding: 8px 4px 16px; }
+      .form-card { padding: 8px 4px 12px; }
       .title-box { font-size: 15px; padding: 6px 2px; }
       .info-row { 
         padding: 4px 6px;
         min-height: 38px;
-        height: 38px;            /* fixed */
+        height: 38px;
         gap: 4px 6px;
       }
       .info-row .label { 
@@ -285,7 +302,7 @@
       }
       .info-row input { 
         font-size: 12px; 
-        height: 28px;            /* FIXED – never bigger than this */
+        height: 28px;
         min-width: 80px;
         padding: 3px 4px;
         max-height: 28px;
@@ -300,17 +317,15 @@
       }
       td .class-number { font-size: 12px; }
       .btn { 
-        padding: 7px 10px; 
+        padding: 7px 12px; 
         font-size: 12px; 
         min-width: 70px;
         flex: 1 0 70px;
         gap: 4px;
       }
-      .action-bar { gap: 8px; }
-      .table-wrapper { border-width: 1px; }
+      .action-bar { gap: 8px; padding: 10px 10px; }
     }
 
-    /* extra safety for very narrow screens */
     @media (max-width: 380px) {
       .info-row .label { min-width: 55px; font-size: 10px; }
       .info-row input { font-size: 11px; height: 26px; min-width: 60px; max-height: 26px; }
@@ -318,7 +333,7 @@
     }
 
     /* ================================================================
-       PRINT STYLES – fit A4 portrait exactly
+       PRINT STYLES – each form on its own A4 page
        ================================================================ */
     @media print {
       body {
@@ -329,14 +344,25 @@
         min-height: auto;
       }
 
-      .app-container {
+      .app-wrapper {
+        max-width: 100%;
+        gap: 0;
+      }
+
+      .form-card {
         max-width: 100%;
         box-shadow: none;
         border-radius: 0;
         padding: 0.3in 0.25in;
-        margin: 0 auto;
+        margin: 0;
         width: 100%;
         background: white;
+        page-break-after: always;
+        page-break-inside: avoid;
+      }
+
+      .form-card:last-child {
+        page-break-after: avoid;
       }
 
       .action-bar {
@@ -427,46 +453,89 @@
 </head>
 <body>
 
-<div class="app-container">
+<div class="app-wrapper">
 
-  <!-- TITLE -->
-  <div class="title-box">TRAINING MUALLIMAHS CLASS ATTENDANCE</div>
+  <!-- ============================================================
+       FORM 1 – First Subject (no subject label)
+       ============================================================ -->
+  <div class="form-card" id="form1">
+    <div class="title-box">TRAINING MUALLIMAHS CLASS ATTENDANCE</div>
 
-  <!-- META FIELDS – each row has fixed height, inputs never grow -->
-  <div class="info-box">
-    <div class="info-row">
-      <span class="label">• MUALLIMAH NAME:</span>
-      <input type="text" id="muallimahName" placeholder="Enter name" value="">
+    <div class="info-box">
+      <div class="info-row">
+        <span class="label">• MUALLIMAH NAME:</span>
+        <input type="text" class="muallimahName" placeholder="Enter name" value="">
+      </div>
+      <div class="info-row">
+        <span class="label">• CLASS TYPE:</span>
+        <input type="text" class="classType" placeholder="e.g. Hifz, Tajweed" value="">
+      </div>
+      <div class="info-row">
+        <span class="label">• STARTING DATE:</span>
+        <input type="date" class="startingDate" value="">
+      </div>
     </div>
-    <div class="info-row">
-      <span class="label">• CLASS TYPE:</span>
-      <input type="text" id="classType" placeholder="e.g. Hifz, Tajweed" value="">
-    </div>
-    <div class="info-row">
-      <span class="label">• STARTING DATE:</span>
-      <input type="date" id="startingDate">
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th class="col-date">DATE</th>
+            <th class="col-class">CLASS</th>
+            <th class="col-batch">BATCH</th>
+            <th class="col-muallimah">CLASS MUALLIMAH</th>
+            <th class="col-time">ATTEND TIME</th>
+          </tr>
+        </thead>
+        <tbody class="tableBody">
+          <!-- 12 rows injected by JavaScript -->
+        </tbody>
+      </table>
     </div>
   </div>
 
-  <!-- TABLE -->
-  <div class="table-wrapper">
-    <table>
-      <thead>
-        <tr>
-          <th class="col-date">DATE</th>
-          <th class="col-class">CLASS</th>
-          <th class="col-batch">BATCH</th>
-          <th class="col-muallimah">CLASS MUALLIMAH</th>
-          <th class="col-time">ATTEND TIME</th>
-        </tr>
-      </thead>
-      <tbody id="tableBody">
-        <!-- 12 rows injected by JavaScript -->
-      </tbody>
-    </table>
+  <!-- ============================================================
+       FORM 2 – Second Subject (no subject label)
+       ============================================================ -->
+  <div class="form-card" id="form2">
+    <div class="title-box">TRAINING MUALLIMAHS CLASS ATTENDANCE</div>
+
+    <div class="info-box">
+      <div class="info-row">
+        <span class="label">• MUALLIMAH NAME:</span>
+        <input type="text" class="muallimahName" placeholder="Enter name" value="">
+      </div>
+      <div class="info-row">
+        <span class="label">• CLASS TYPE:</span>
+        <input type="text" class="classType" placeholder="e.g. Hifz, Tajweed" value="">
+      </div>
+      <div class="info-row">
+        <span class="label">• STARTING DATE:</span>
+        <input type="date" class="startingDate" value="">
+      </div>
+    </div>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th class="col-date">DATE</th>
+            <th class="col-class">CLASS</th>
+            <th class="col-batch">BATCH</th>
+            <th class="col-muallimah">CLASS MUALLIMAH</th>
+            <th class="col-time">ATTEND TIME</th>
+          </tr>
+        </thead>
+        <tbody class="tableBody">
+          <!-- 12 rows injected by JavaScript -->
+        </tbody>
+      </table>
+    </div>
   </div>
 
-  <!-- ACTION BUTTONS -->
+  <!-- ============================================================
+       SINGLE ACTION BAR – controls both forms
+       ============================================================ -->
   <div class="action-bar">
     <button class="btn btn-print" id="printBtn">🖨️ Print</button>
     <button class="btn btn-pdf" id="pdfBtn">📄 Download PDF</button>
@@ -482,15 +551,10 @@
   (function() {
     "use strict";
 
-    const tbody = document.getElementById('tableBody');
-    const muallimahInput = document.getElementById('muallimahName');
-    const classTypeInput = document.getElementById('classType');
-    const startingDateInput = document.getElementById('startingDate');
-
     // --------------------------------------------------------------
-    // BUILD 12 ROWS
+    // 1. BUILD TABLE ROWS for a given tbody
     // --------------------------------------------------------------
-    function buildTableRows() {
+    function buildTableRows(tbody) {
       tbody.innerHTML = '';
       for (let i = 1; i <= 12; i++) {
         const tr = document.createElement('tr');
@@ -541,42 +605,49 @@
         tbody.appendChild(tr);
       }
     }
-    buildTableRows();
 
     // --------------------------------------------------------------
-    // DEFAULT DATE
+    // 2. INIT all forms
     // --------------------------------------------------------------
-    function setDefaultDate() {
+    const form1 = document.getElementById('form1');
+    const form2 = document.getElementById('form2');
+
+    const tbody1 = form1.querySelector('.tableBody');
+    const tbody2 = form2.querySelector('.tableBody');
+
+    buildTableRows(tbody1);
+    buildTableRows(tbody2);
+
+    // --------------------------------------------------------------
+    // 3. DEFAULT DATES for both forms
+    // --------------------------------------------------------------
+    function setDefaultDate(form) {
       const today = new Date();
       const yyyy = today.getFullYear();
       const mm = String(today.getMonth() + 1).padStart(2, '0');
       const dd = String(today.getDate()).padStart(2, '0');
       const dateStr = `${yyyy}-${mm}-${dd}`;
-      if (!startingDateInput.value) {
-        startingDateInput.value = dateStr;
+      const dateInput = form.querySelector('.startingDate');
+      if (dateInput && !dateInput.value) {
+        dateInput.value = dateStr;
       }
     }
-    setDefaultDate();
+
+    setDefaultDate(form1);
+    setDefaultDate(form2);
 
     // --------------------------------------------------------------
-    // LOCALSTORAGE
+    // 4. LOCALSTORAGE – SAVE / LOAD (both forms independently)
     // --------------------------------------------------------------
-    const STORAGE_KEY = 'attendance_app_data';
+    const STORAGE_KEY_1 = 'attendance_form1_data';
+    const STORAGE_KEY_2 = 'attendance_form2_data';
 
-    function getData() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (raw) return JSON.parse(raw);
-        return null;
-      } catch (_) { return null; }
-    }
+    function getFormData(form) {
+      const muallimah = form.querySelector('.muallimahName').value || '';
+      const classType = form.querySelector('.classType').value || '';
+      const startingDate = form.querySelector('.startingDate').value || '';
 
-    function saveData() {
-      const name = muallimahInput.value || '';
-      const classType = classTypeInput.value || '';
-      const startingDate = startingDateInput.value || '';
-
-      const rows = tbody.querySelectorAll('tr');
+      const rows = form.querySelectorAll('.tableBody tr');
       const attendance = [];
       rows.forEach((tr, idx) => {
         const rowNum = idx + 1;
@@ -594,28 +665,29 @@
         });
       });
 
-      const payload = { name, classType, startingDate, attendance };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+      return { name: muallimah, classType, startingDate, attendance };
     }
 
-    function loadData() {
-      const data = getData();
+    function setFormData(form, data) {
       if (!data) return;
+      const nameInput = form.querySelector('.muallimahName');
+      const classInput = form.querySelector('.classType');
+      const dateInput = form.querySelector('.startingDate');
 
-      if (data.name) muallimahInput.value = data.name;
-      if (data.classType) classTypeInput.value = data.classType;
-      if (data.startingDate) startingDateInput.value = data.startingDate;
+      if (data.name) nameInput.value = data.name;
+      if (data.classType) classInput.value = data.classType;
+      if (data.startingDate) dateInput.value = data.startingDate;
 
       if (Array.isArray(data.attendance) && data.attendance.length === 12) {
-        const rows = tbody.querySelectorAll('tr');
+        const rows = form.querySelectorAll('.tableBody tr');
         rows.forEach((tr, idx) => {
           const rowData = data.attendance[idx] || {};
-          const dateInput = tr.querySelector('.input-date');
+          const dateInputRow = tr.querySelector('.input-date');
           const batchInput = tr.querySelector('.input-batch');
           const muallimahInputRow = tr.querySelector('.input-muallimah');
           const timeInput = tr.querySelector('.input-time');
 
-          if (dateInput) dateInput.value = rowData.date || '';
+          if (dateInputRow) dateInputRow.value = rowData.date || '';
           if (batchInput) batchInput.value = rowData.batch || '';
           if (muallimahInputRow) muallimahInputRow.value = rowData.muallimah || '';
           if (timeInput) timeInput.value = rowData.attendTime || '';
@@ -623,68 +695,81 @@
       }
     }
 
+    function saveAllData() {
+      const data1 = getFormData(form1);
+      const data2 = getFormData(form2);
+      localStorage.setItem(STORAGE_KEY_1, JSON.stringify(data1));
+      localStorage.setItem(STORAGE_KEY_2, JSON.stringify(data2));
+    }
+
+    function loadAllData() {
+      try {
+        const raw1 = localStorage.getItem(STORAGE_KEY_1);
+        const raw2 = localStorage.getItem(STORAGE_KEY_2);
+        if (raw1) setFormData(form1, JSON.parse(raw1));
+        if (raw2) setFormData(form2, JSON.parse(raw2));
+      } catch (_) {}
+    }
+
     // --------------------------------------------------------------
-    // AUTO-SAVE
+    // 5. AUTO-SAVE on any input change
     // --------------------------------------------------------------
     function attachAutoSave() {
-      [muallimahInput, classTypeInput, startingDateInput].forEach(el => {
-        el.addEventListener('input', saveData);
-        el.addEventListener('change', saveData);
-      });
-
-      tbody.addEventListener('input', (e) => {
-        if (e.target.tagName === 'INPUT') saveData();
-      });
-      tbody.addEventListener('change', (e) => {
-        if (e.target.tagName === 'INPUT') saveData();
+      // For both forms, listen to all inputs
+      document.querySelectorAll('.form-card input').forEach(el => {
+        el.addEventListener('input', saveAllData);
+        el.addEventListener('change', saveAllData);
       });
     }
 
     // --------------------------------------------------------------
-    // CLEAR
+    // 6. CLEAR (with confirmation + password 123)
     // --------------------------------------------------------------
     function clearAllData() {
-      if (!confirm('⚠️ Are you sure you want to clear ALL attendance data?')) return;
+      if (!confirm('⚠️ Are you sure you want to clear ALL attendance data from BOTH forms?')) return;
       const pwd = prompt('Enter password to clear data:');
       if (pwd !== '123') {
         alert('❌ Wrong Password');
         return;
       }
 
-      localStorage.removeItem(STORAGE_KEY);
-      muallimahInput.value = '';
-      classTypeInput.value = '';
-      setDefaultDate();
+      // Clear localStorage
+      localStorage.removeItem(STORAGE_KEY_1);
+      localStorage.removeItem(STORAGE_KEY_2);
 
-      const rows = tbody.querySelectorAll('tr');
-      rows.forEach(tr => {
-        const dateInput = tr.querySelector('.input-date');
-        const batchInput = tr.querySelector('.input-batch');
-        const muallimahInputRow = tr.querySelector('.input-muallimah');
-        const timeInput = tr.querySelector('.input-time');
-
-        if (dateInput) dateInput.value = '';
-        if (batchInput) batchInput.value = '';
-        if (muallimahInputRow) muallimahInputRow.value = '';
-        if (timeInput) timeInput.value = '';
+      // Reset all forms
+      document.querySelectorAll('.form-card').forEach(form => {
+        form.querySelectorAll('.muallimahName, .classType').forEach(el => el.value = '');
+        const dateInput = form.querySelector('.startingDate');
+        if (dateInput) {
+          const today = new Date();
+          const yyyy = today.getFullYear();
+          const mm = String(today.getMonth() + 1).padStart(2, '0');
+          const dd = String(today.getDate()).padStart(2, '0');
+          dateInput.value = `${yyyy}-${mm}-${dd}`;
+        }
+        form.querySelectorAll('.input-date, .input-batch, .input-muallimah, .input-time').forEach(el => {
+          el.value = '';
+        });
       });
 
-      saveData();
+      saveAllData();
       alert('✅ All data cleared. Ready for new cycle.');
     }
 
     // --------------------------------------------------------------
-    // PRINT
+    // 7. PRINT (both forms, each on separate page)
     // --------------------------------------------------------------
     function printSheet() {
       window.print();
     }
 
     // --------------------------------------------------------------
-    // PDF
+    // 8. PDF (html2pdf) – captures both forms
     // --------------------------------------------------------------
     function downloadPDF() {
-      let startDate = startingDateInput.value || 'no-date';
+      // Get starting date from first form for filename
+      let startDate = form1.querySelector('.startingDate').value || 'no-date';
       if (!startDate || startDate === 'no-date') {
         const today = new Date();
         const yyyy = today.getFullYear();
@@ -692,9 +777,9 @@
         const dd = String(today.getDate()).padStart(2, '0');
         startDate = `${yyyy}-${mm}-${dd}`;
       }
-      const fileName = `Arthika Mount - ${startDate}.pdf`;
+      const fileName = `Attendance_Both_Forms_${startDate}.pdf`;
 
-      const element = document.querySelector('.app-container');
+      const element = document.querySelector('.app-wrapper');
 
       if (typeof html2pdf === 'undefined') {
         alert('html2pdf library not loaded. Please check internet connection.');
@@ -709,6 +794,7 @@
         jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
       };
 
+      // Hide action bar temporarily
       const actionBar = document.querySelector('.action-bar');
       if (actionBar) actionBar.style.display = 'none';
 
@@ -720,18 +806,20 @@
     }
 
     // --------------------------------------------------------------
-    // INIT
+    // 9. INIT
     // --------------------------------------------------------------
     function init() {
-      loadData();
-      if (!startingDateInput.value) setDefaultDate();
+      loadAllData();
+      // Ensure dates are set if empty
+      if (!form1.querySelector('.startingDate').value) setDefaultDate(form1);
+      if (!form2.querySelector('.startingDate').value) setDefaultDate(form2);
       attachAutoSave();
 
       document.getElementById('printBtn').addEventListener('click', printSheet);
       document.getElementById('pdfBtn').addEventListener('click', downloadPDF);
       document.getElementById('clearBtn').addEventListener('click', clearAllData);
 
-      window.addEventListener('beforeunload', saveData);
+      window.addEventListener('beforeunload', saveAllData);
     }
 
     init();

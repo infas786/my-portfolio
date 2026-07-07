@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Training Muallimahs · Attendance</title>
+  <style>
+    /* ----- GLOBAL RESET / BASE ----- */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: #f2f4f6;
+      font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 20px 12px;
+      margin: 0;
+      min-height: 100vh;
+    }
+
+    /* ----- MAIN CARD (matches A4 feel) ----- */
+    .app-container {
+      max-width: 1100px;
+      width: 100%;
+      background: white;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+      border-radius: 12px;
+      padding: 24px 28px 32px;
+      transition: all 0.2s;
+    }
+
+    /* ----- HEADER TITLE (exact match) ----- */
+    .title-box {
+      border: 2px solid #000000;
+      text-align: center;
+      font-weight: 700;
+      font-size: 22px;
+      letter-spacing: 1.2px;
+      padding: 12px 10px;
+      margin-bottom: 18px;
+      background: #fafafa;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      text-transform: uppercase;
+      word-break: break-word;
+    }
+
+    /* ----- META INFO (MUALLIMAH NAME, CLASS TYPE, STARTING DATE) ----- */
+    .info-box {
+      border: 2px solid #000000;
+      margin-bottom: 18px;
+      background: #ffffff;
+    }
+
+    .info-row {
+      display: flex;
+      align-items: center;
+      padding: 6px 14px;
+      border-bottom: 1px solid #000000;
+      font-weight: 600;
+      font-size: 15px;
+      gap: 8px;
+      flex-wrap: wrap;
+      min-height: 44px;
+    }
+
+    .info-row:last-child {
+      border-bottom: none;
+    }
+
+    .info-row .label {
+      white-space: nowrap;
+      min-width: 130px;
+    }
+
+    .info-row input,
+    .info-row input[type="date"] {
+      flex: 1 1 180px;
+      border: 1px solid #777;
+      padding: 6px 10px;
+      font-size: 14px;
+      font-weight: 500;
+      background: #fcfcfc;
+      border-radius: 4px;
+      outline: none;
+      transition: 0.15s;
+      min-width: 140px;
+      color: #111;
+      height: 36px;
+    }
+
+    .info-row input:focus {
+      border-color: #000;
+      background: #fff;
+      box-shadow: 0 0 0 2px rgba(0,0,0,0.05);
+    }
+
+    /* ----- TABLE (exact borders & dimensions) ----- */
+    .table-wrapper {
+      overflow-x: auto;
+      border: 1px solid #000;
+      margin-bottom: 4px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      background: white;
+      table-layout: fixed;
+    }
+
+    th, td {
+      border: 1px solid #000000;
+      text-align: center;
+      vertical-align: middle;
+      padding: 4px 3px;
+    }
+
+    th {
+      background: #f1f3f5;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 0.2px;
+      padding: 8px 3px;
+    }
+
+    /* column widths (match design) */
+    .col-date     { width: 16%; }
+    .col-class    { width: 10%; }
+    .col-batch    { width: 18%; }
+    .col-muallimah{ width: 32%; }
+    .col-time     { width: 24%; }
+
+    /* table cells with inputs */
+    td input, td input[type="date"], td input[type="time"] {
+      width: 100%;
+      border: none;
+      padding: 5px 2px;
+      font-size: 13px;
+      text-align: center;
+      background: transparent;
+      outline: none;
+      font-family: inherit;
+      color: #111;
+      min-height: 32px;
+      box-sizing: border-box;
+    }
+
+    td input:focus {
+      background: #f0f5ff;
+      border-radius: 2px;
+      box-shadow: inset 0 0 0 1px #0a58ca;
+    }
+
+    td .class-number {
+      font-weight: 700;
+      font-size: 14px;
+      padding: 2px 0;
+      display: block;
+      color: #000;
+    }
+
+    /* ----- ACTION BUTTONS (below table) ----- */
+    .action-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 14px 18px;
+      margin-top: 22px;
+      padding-top: 10px;
+      border-top: 1px solid #d0d4d8;
+    }
+
+    .btn {
+      background: white;
+      border: 1.5px solid #1e1e1e;
+      padding: 10px 28px;
+      font-weight: 600;
+      font-size: 15px;
+      border-radius: 60px;
+      cursor: pointer;
+      color: #1e1e1e;
+      transition: 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      letter-spacing: 0.2px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+      background: #fcfcfc;
+    }
+
+    .btn:hover {
+      background: #1e1e1e;
+      color: white;
+      border-color: #1e1e1e;
+      transform: scale(1.02);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.08);
+    }
+
+    .btn-clear:hover {
+      background: #b22222;
+      border-color: #b22222;
+      color: white;
+    }
+
+    .btn-pdf:hover {
+      background: #0b5e7c;
+      border-color: #0b5e7c;
+      color: white;
+    }
+
+    .btn-print:hover {
+      background: #2a5c3e;
+      border-color: #2a5c3e;
+      color: white;
+    }
+
+    /* ----- RESPONSIVE TWEAKS ----- */
+    @media (max-width: 750px) {
+      .app-container { padding: 16px 10px; }
+      .title-box { font-size: 18px; padding: 10px 6px; }
+      .info-row { padding: 5px 8px; font-size: 13px; }
+      .info-row .label { min-width: 90px; }
+      th, td { font-size: 12px; padding: 3px 2px; }
+      td input { font-size: 12px; padding: 4px 2px; min-height: 28px; }
+      .btn { padding: 8px 16px; font-size: 13px; }
+    }
+
+    @media (max-width: 500px) {
+      .info-row { flex-direction: column; align-items: stretch; }
+      .info-row .label { min-width: auto; }
+      .action-bar { gap: 10px; }
+      .btn { width: 100%; justify-content: center; }
+    }
+
+    /* ================================================================
+       PRINT STYLES – fit A4 portrait exactly, no overflow
+       ================================================================ */
+    @media print {
+      /* reset body & container for A4 */
+      body {
+        background: white;
+        padding: 0;
+        margin: 0;
+        display: block;
+        min-height: auto;
+      }
+
+      .app-container {
+        max-width: 100%;
+        box-shadow: none;
+        border-radius: 0;
+        padding: 0.3in 0.25in;
+        margin: 0 auto;
+        width: 100%;
+        background: white;
+      }
+
+      /* hide buttons */
+      .action-bar {
+        display: none !important;
+      }
+
+      /* ensure table fits */
+      .table-wrapper {
+        border: 1px solid #000;
+        overflow: visible;
+      }
+
+      table {
+        font-size: 11pt;
+        width: 100%;
+        table-layout: fixed;
+      }
+
+      th {
+        background: #f1f3f5 !important;
+        font-size: 11pt;
+        padding: 5px 2px;
+      }
+
+      td {
+        padding: 3px 2px;
+      }
+
+      td input {
+        border: none;
+        background: transparent;
+        font-size: 10pt;
+        padding: 3px 1px;
+        min-height: 22px;
+        box-shadow: none;
+      }
+
+      td input:focus {
+        background: transparent;
+        box-shadow: none;
+      }
+
+      .title-box {
+        font-size: 16pt;
+        padding: 8px 6px;
+        margin-bottom: 12px;
+        background: white;
+      }
+
+      .info-box {
+        margin-bottom: 12px;
+      }
+
+      .info-row {
+        padding: 3px 10px;
+        font-size: 11pt;
+        min-height: 30px;
+      }
+
+      .info-row input {
+        border: 1px solid #666;
+        font-size: 10pt;
+        padding: 3px 6px;
+        height: 28px;
+        background: white;
+      }
+
+      /* ensure no overflow */
+      .app-container, .info-box, .table-wrapper {
+        page-break-inside: avoid;
+      }
+
+      /* class number */
+      td .class-number {
+        font-size: 11pt;
+      }
+
+      /* column widths fine-tuned for A4 */
+      .col-date     { width: 16%; }
+      .col-class    { width: 10%; }
+      .col-batch    { width: 18%; }
+      .col-muallimah{ width: 32%; }
+      .col-time     { width: 24%; }
+    }
+
+    /* small helper */
+    .text-muted { color: #555; }
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+
+  <!-- TITLE (exact match) -->
+  <div class="title-box">TRAINING MUALLIMAHS CLASS ATTENDANCE</div>
+
+  <!-- META FIELDS (MUALLIMAH NAME · CLASS TYPE · STARTING DATE) -->
+  <div class="info-box">
+    <div class="info-row">
+      <span class="label">• MUALLIMAH NAME:</span>
+      <input type="text" id="muallimahName" placeholder="Enter name" value="">
+    </div>
+    <div class="info-row">
+      <span class="label">• CLASS TYPE:</span>
+      <input type="text" id="classType" placeholder="e.g. Hifz, Tajweed" value="">
+    </div>
+    <div class="info-row">
+      <span class="label">• STARTING DATE:</span>
+      <input type="date" id="startingDate">
+    </div>
+  </div>
+
+  <!-- TABLE (12 rows, columns: DATE · CLASS · BATCH · CLASS MUALLIMAH · ATTEND TIME) -->
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th class="col-date">DATE</th>
+          <th class="col-class">CLASS</th>
+          <th class="col-batch">BATCH</th>
+          <th class="col-muallimah">CLASS MUALLIMAH</th>
+          <th class="col-time">ATTEND TIME</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+        <!-- 12 rows will be injected by JavaScript -->
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ACTION BUTTONS (Print · PDF · Clear) -->
+  <div class="action-bar">
+    <button class="btn btn-print" id="printBtn">🖨️ Print</button>
+    <button class="btn btn-pdf" id="pdfBtn">📄 Download PDF</button>
+    <button class="btn btn-clear" id="clearBtn">🗑️ Clear All</button>
+  </div>
+
+</div>
+
+<script>
+  (function() {
+    "use strict";
+
+    // --------------------------------------------------------------
+    // 1. REFS
+    // --------------------------------------------------------------
+    const tbody = document.getElementById('tableBody');
+    const muallimahInput = document.getElementById('muallimahName');
+    const classTypeInput = document.getElementById('classType');
+    const startingDateInput = document.getElementById('startingDate');
+
+    // --------------------------------------------------------------
+    // 2. BUILD 12 ROWS (each row: date input, class number, batch, muallimah, time)
+    // --------------------------------------------------------------
+    function buildTableRows() {
+      tbody.innerHTML = '';
+      for (let i = 1; i <= 12; i++) {
+        const tr = document.createElement('tr');
+
+        // DATE cell
+        const tdDate = document.createElement('td');
+        const dateInput = document.createElement('input');
+        dateInput.type = 'date';
+        dateInput.dataset.row = i;
+        dateInput.dataset.field = 'date';
+        dateInput.className = 'input-date';
+        tdDate.appendChild(dateInput);
+
+        // CLASS cell (fixed number)
+        const tdClass = document.createElement('td');
+        tdClass.innerHTML = `<span class="class-number">${i}</span>`;
+
+        // BATCH cell
+        const tdBatch = document.createElement('td');
+        const batchInput = document.createElement('input');
+        batchInput.type = 'text';
+        batchInput.placeholder = 'Batch';
+        batchInput.dataset.row = i;
+        batchInput.dataset.field = 'batch';
+        batchInput.className = 'input-batch';
+        tdBatch.appendChild(batchInput);
+
+        // CLASS MUALLIMAH cell
+        const tdMuallimah = document.createElement('td');
+        const muallimahInputRow = document.createElement('input');
+        muallimahInputRow.type = 'text';
+        muallimahInputRow.placeholder = 'Muallimah';
+        muallimahInputRow.dataset.row = i;
+        muallimahInputRow.dataset.field = 'muallimah';
+        muallimahInputRow.className = 'input-muallimah';
+        tdMuallimah.appendChild(muallimahInputRow);
+
+        // ATTEND TIME cell
+        const tdTime = document.createElement('td');
+        const timeInput = document.createElement('input');
+        timeInput.type = 'time';
+        timeInput.dataset.row = i;
+        timeInput.dataset.field = 'attendTime';
+        timeInput.className = 'input-time';
+        tdTime.appendChild(timeInput);
+
+        tr.appendChild(tdDate);
+        tr.appendChild(tdClass);
+        tr.appendChild(tdBatch);
+        tr.appendChild(tdMuallimah);
+        tr.appendChild(tdTime);
+
+        tbody.appendChild(tr);
+      }
+    }
+    buildTableRows();
+
+    // --------------------------------------------------------------
+    // 3. DEFAULT: set starting date to today
+    // --------------------------------------------------------------
+    function setDefaultDate() {
+      const today = new Date();
+      const yyyy = today.getFullYear();
+      const mm = String(today.getMonth() + 1).padStart(2, '0');
+      const dd = String(today.getDate()).padStart(2, '0');
+      const dateStr = `${yyyy}-${mm}-${dd}`;
+      if (!startingDateInput.value) {
+        startingDateInput.value = dateStr;
+      }
+    }
+    setDefaultDate();
+
+    // --------------------------------------------------------------
+    // 4. LOCALSTORAGE – LOAD / SAVE
+    // --------------------------------------------------------------
+    const STORAGE_KEY = 'attendance_app_data';
+
+    function getData() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) return JSON.parse(raw);
+        return null;
+      } catch (_) { return null; }
+    }
+
+    function saveData() {
+      // gather meta
+      const name = muallimahInput.value || '';
+      const classType = classTypeInput.value || '';
+      const startingDate = startingDateInput.value || '';
+
+      // gather rows
+      const rows = tbody.querySelectorAll('tr');
+      const attendance = [];
+      rows.forEach((tr, idx) => {
+        const rowNum = idx + 1;
+        const dateInput = tr.querySelector('.input-date');
+        const batchInput = tr.querySelector('.input-batch');
+        const muallimahInputRow = tr.querySelector('.input-muallimah');
+        const timeInput = tr.querySelector('.input-time');
+
+        attendance.push({
+          class: rowNum,
+          date: dateInput ? dateInput.value : '',
+          batch: batchInput ? batchInput.value : '',
+          muallimah: muallimahInputRow ? muallimahInputRow.value : '',
+          attendTime: timeInput ? timeInput.value : ''
+        });
+      });
+
+      const payload = {
+        name,
+        classType,
+        startingDate,
+        attendance
+      };
+
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    }
+
+    function loadData() {
+      const data = getData();
+      if (!data) return;
+
+      // meta
+      if (data.name) muallimahInput.value = data.name;
+      if (data.classType) classTypeInput.value = data.classType;
+      if (data.startingDate) startingDateInput.value = data.startingDate;
+
+      // rows
+      if (Array.isArray(data.attendance) && data.attendance.length === 12) {
+        const rows = tbody.querySelectorAll('tr');
+        rows.forEach((tr, idx) => {
+          const rowData = data.attendance[idx] || {};
+          const dateInput = tr.querySelector('.input-date');
+          const batchInput = tr.querySelector('.input-batch');
+          const muallimahInputRow = tr.querySelector('.input-muallimah');
+          const timeInput = tr.querySelector('.input-time');
+
+          if (dateInput) dateInput.value = rowData.date || '';
+          if (batchInput) batchInput.value = rowData.batch || '';
+          if (muallimahInputRow) muallimahInputRow.value = rowData.muallimah || '';
+          if (timeInput) timeInput.value = rowData.attendTime || '';
+        });
+      }
+    }
+
+    // --------------------------------------------------------------
+    // 5. AUTO-SAVE on any input change
+    // --------------------------------------------------------------
+    function attachAutoSave() {
+      // meta fields
+      [muallimahInput, classTypeInput, startingDateInput].forEach(el => {
+        el.addEventListener('input', saveData);
+        el.addEventListener('change', saveData);
+      });
+
+      // table inputs (delegation)
+      tbody.addEventListener('input', (e) => {
+        if (e.target.tagName === 'INPUT') {
+          saveData();
+        }
+      });
+      tbody.addEventListener('change', (e) => {
+        if (e.target.tagName === 'INPUT') {
+          saveData();
+        }
+      });
+    }
+
+    // --------------------------------------------------------------
+    // 6. CLEAR (with confirmation + password 123)
+    // --------------------------------------------------------------
+    function clearAllData() {
+      const confirmClear = confirm('⚠️ Are you sure you want to clear ALL attendance data?');
+      if (!confirmClear) return;
+
+      const pwd = prompt('Enter password to clear data:');
+      if (pwd !== '123') {
+        alert('❌ Wrong Password');
+        return;
+      }
+
+      // clear localStorage
+      localStorage.removeItem(STORAGE_KEY);
+
+      // reset meta
+      muallimahInput.value = '';
+      classTypeInput.value = '';
+      setDefaultDate(); // sets today
+
+      // reset table rows
+      const rows = tbody.querySelectorAll('tr');
+      rows.forEach(tr => {
+        const dateInput = tr.querySelector('.input-date');
+        const batchInput = tr.querySelector('.input-batch');
+        const muallimahInputRow = tr.querySelector('.input-muallimah');
+        const timeInput = tr.querySelector('.input-time');
+
+        if (dateInput) dateInput.value = '';
+        if (batchInput) batchInput.value = '';
+        if (muallimahInputRow) muallimahInputRow.value = '';
+        if (timeInput) timeInput.value = '';
+      });
+
+      saveData(); // persist cleared state
+      alert('✅ All data cleared. Ready for new cycle.');
+    }
+
+    // --------------------------------------------------------------
+    // 7. PRINT (only sheet, A4 portrait) – fits A4 with no overflow
+    // --------------------------------------------------------------
+    function printSheet() {
+      window.print();
+    }
+
+    // --------------------------------------------------------------
+    // 8. PDF (html2pdf) – exactly like print, A4 fit
+    // --------------------------------------------------------------
+    function downloadPDF() {
+      // get starting date for filename
+      let startDate = startingDateInput.value || 'no-date';
+      if (!startDate) {
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        startDate = `${yyyy}-${mm}-${dd}`;
+      }
+      const fileName = `Arthika Mount - ${startDate}.pdf`;
+
+      const element = document.querySelector('.app-container');
+
+      if (typeof html2pdf === 'undefined') {
+        alert('html2pdf library not loaded. Please check internet connection.');
+        return;
+      }
+
+      // Use A4 portrait with small margins – the content is already sized to fit
+      const opt = {
+        margin:        [0.4, 0.3, 0.4, 0.3], // top, right, bottom, left (in)
+        filename:     fileName,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, letterRendering: true, useCORS: true },
+        jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+      };
+
+      // hide buttons temporarily
+      const actionBar = document.querySelector('.action-bar');
+      if (actionBar) actionBar.style.display = 'none';
+
+      html2pdf().set(opt).from(element).save().then(() => {
+        if (actionBar) actionBar.style.display = 'flex';
+      }).catch(() => {
+        if (actionBar) actionBar.style.display = 'flex';
+      });
+    }
+
+    // --------------------------------------------------------------
+    // 9. INIT
+    // --------------------------------------------------------------
+    function init() {
+      loadData();
+      if (!startingDateInput.value) setDefaultDate();
+      attachAutoSave();
+
+      document.getElementById('printBtn').addEventListener('click', printSheet);
+      document.getElementById('pdfBtn').addEventListener('click', downloadPDF);
+      document.getElementById('clearBtn').addEventListener('click', clearAllData);
+
+      window.addEventListener('beforeunload', saveData);
+    }
+
+    init();
+  })();
+</script>
+
+</body>
+</html>

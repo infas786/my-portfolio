@@ -1,829 +1,718 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-  <title>Training Muallimahs · Dual Attendance</title>
-  <style>
-    /* ----- GLOBAL RESET / BASE ----- */
+<meta charset="UTF-8">
+<title>Training Muallimahs Class Attendance</title>
+
+<style>
+    /* --- EXACT RESET & PRINT LAYOUT --- */
     * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
     }
 
     body {
-      background: #e8ebee;
-      font-family: 'Segoe UI', Roboto, Arial, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px 12px;
-      margin: 0;
-      min-height: 100vh;
+        margin: 0;
+        background: #f0f2f5;
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px 10px;
+        min-height: 100vh;
     }
 
-    /* ----- MAIN CONTAINER (holds both forms) ----- */
-    .app-wrapper {
-      max-width: 1100px;
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 30px;
+    /* --- A4 PAGE CONTAINER (identical width) --- */
+    .page {
+        width: 595px;
+        min-height: 842px;
+        margin: 0 auto;
+        padding-top: 48px;
+        background: white;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        position: relative;
     }
 
-    /* ----- INDIVIDUAL FORM CARD (matches A4 feel) ----- */
-    .form-card {
-      width: 100%;
-      background: white;
-      box-shadow: 0 12px 30px rgba(0,0,0,0.08);
-      border-radius: 12px;
-      padding: 16px 14px 20px;
-      transition: all 0.2s;
-      page-break-after: always;  /* each form starts on new page when printing */
+    /* --- TITLE (exact match) --- */
+    .title {
+        width: 420px;
+        margin: 0 auto 12px auto;
+        border: 1px solid #555;
+        text-align: center;
+        font-size: 14px;
+        font-weight: bold;
+        letter-spacing: .5px;
+        height: 20px;
+        line-height: 20px;
+        background: #fafafa;
     }
 
-    .form-card:last-child {
-      page-break-after: avoid;
+    /* --- TABLE BOX (exact dimensions) --- */
+    .box {
+        width: 420px;
+        margin: 0 auto 42px auto;
+        border-collapse: collapse;
+        font-size: 11px;
+        font-weight: bold;
     }
 
-    /* ----- HEADER TITLE ----- */
-    .title-box {
-      border: 2px solid #000000;
-      text-align: center;
-      font-weight: 700;
-      font-size: 20px;
-      letter-spacing: 1px;
-      padding: 10px 8px;
-      margin-bottom: 14px;
-      background: #fafafa;
-      font-family: 'Segoe UI', Arial, sans-serif;
-      text-transform: uppercase;
-      word-break: break-word;
+    /* second table has less bottom margin */
+    .box.second {
+        margin-bottom: 0;
     }
 
-    /* ----- META INFO – STRICTLY FIXED LAYOUT ----- */
-    .info-box {
-      border: 2px solid #000000;
-      margin-bottom: 16px;
-      background: #ffffff;
-      border-radius: 0;
-      display: flex;
-      flex-direction: column;
+    /* --- ALL CELLS share border + height --- */
+    .box td {
+        border: 1px solid #777;
+        height: 17px;
+        padding: 0 3px;
+        vertical-align: middle;
     }
 
-    .info-row {
-      display: flex;
-      align-items: center;
-      padding: 6px 12px;
-      border-bottom: 1px solid #000000;
-      font-weight: 600;
-      font-size: 15px;
-      gap: 8px 12px;
-      flex-wrap: nowrap;
-      min-height: 44px;
-      height: 44px;
+    /* --- INFO rows (first 3 rows) --- */
+    .info td {
+        height: 17px;
+        font-weight: bold;
+        font-size: 11px;
     }
 
-    .info-row:last-child {
-      border-bottom: none;
+    /* --- HEADER row (DATE, CLASS, etc.) --- */
+    .header td {
+        height: 18px;
+        text-align: center;
+        font-size: 11px;
+        font-weight: bold;
+        background: #f1f3f5;
+        padding: 0 2px;
     }
 
-    .info-row .label {
-      white-space: nowrap;
-      min-width: 130px;
-      font-size: 14px;
-      flex-shrink: 0;
+    /* --- ATTENDANCE rows (data rows) --- */
+    .attendance td {
+        height: 16px;
+        font-weight: normal;
+        padding: 0 2px;
     }
 
-    .info-row input,
-    .info-row input[type="date"] {
-      flex: 1 1 auto;
-      border: 1px solid #777;
-      padding: 6px 10px;
-      font-size: 14px;
-      font-weight: 500;
-      background: #fcfcfc;
-      border-radius: 4px;
-      outline: none;
-      transition: 0.15s;
-      min-width: 140px;
-      color: #111;
-      height: 32px;
-      box-sizing: border-box;
-      max-height: 32px;
+    /* --- INPUTS inside cells – invisible, fill cell --- */
+    .attendance input,
+    .info input {
+        width: 100%;
+        border: none;
+        background: transparent;
+        font-size: 10px;
+        font-family: Arial, sans-serif;
+        padding: 1px 0;
+        margin: 0;
+        outline: none;
+        height: 100%;
+        box-sizing: border-box;
+        color: #111;
+        font-weight: normal;
     }
 
-    .info-row input:focus {
-      border-color: #000;
-      background: #fff;
-      box-shadow: 0 0 0 2px rgba(0,0,0,0.05);
+    .info input {
+        font-weight: bold;
+        font-size: 11px;
     }
 
-    /* ----- TABLE ----- */
-    .table-wrapper {
-      overflow-x: auto;
-      border: 1px solid #000;
-      margin-bottom: 4px;
-      -webkit-overflow-scrolling: touch;
+    .attendance input:focus,
+    .info input:focus {
+        background: #f0f5ff;
+        border-radius: 1px;
     }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 14px;
-      background: white;
-      table-layout: fixed;
-      min-width: 500px;
+    /* --- COLUMN WIDTHS (exact match) --- */
+    .date {
+        width: 70px;
+        text-align: center;
+    }
+    .class {
+        width: 45px;
+        text-align: center;
+        font-weight: normal;
+    }
+    .batch {
+        width: 60px;
+    }
+    .muallimah {
+        width: 140px;
+    }
+    .time {
+        width: 100px;
     }
 
-    th, td {
-      border: 1px solid #000000;
-      text-align: center;
-      vertical-align: middle;
-      padding: 4px 3px;
+    /* --- CLASS number styling --- */
+    .class-number {
+        font-weight: bold;
+        font-size: 11px;
+        display: block;
+        text-align: center;
     }
 
-    th {
-      background: #f1f3f5;
-      font-weight: 700;
-      font-size: 13px;
-      letter-spacing: 0.2px;
-      padding: 8px 2px;
-    }
-
-    .col-date     { width: 16%; }
-    .col-class    { width: 10%; }
-    .col-batch    { width: 18%; }
-    .col-muallimah{ width: 32%; }
-    .col-time     { width: 24%; }
-
-    td input, td input[type="date"], td input[type="time"] {
-      width: 100%;
-      border: none;
-      padding: 5px 2px;
-      font-size: 13px;
-      text-align: center;
-      background: transparent;
-      outline: none;
-      font-family: inherit;
-      color: #111;
-      min-height: 32px;
-      box-sizing: border-box;
-      height: 32px;
-    }
-
-    td input:focus {
-      background: #f0f5ff;
-      border-radius: 2px;
-      box-shadow: inset 0 0 0 1px #0a58ca;
-    }
-
-    td .class-number {
-      font-weight: 700;
-      font-size: 14px;
-      padding: 2px 0;
-      display: block;
-      color: #000;
-    }
-
-    /* ----- ACTION BUTTONS (single set below both forms) ----- */
-    .action-bar {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 12px 16px;
-      margin-top: 10px;
-      padding-top: 16px;
-      border-top: 2px solid #000;
-      background: white;
-      border-radius: 12px;
-      padding: 16px 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    /* --- BUTTONS --- */
+    .button-bar {
+        margin-top: 20px;
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: 16px 20px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        max-width: 595px;
+        width: 100%;
     }
 
     .btn {
-      background: white;
-      border: 1.5px solid #1e1e1e;
-      padding: 10px 28px;
-      font-weight: 600;
-      font-size: 15px;
-      border-radius: 60px;
-      cursor: pointer;
-      color: #1e1e1e;
-      transition: 0.2s;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      letter-spacing: 0.2px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-      background: #fcfcfc;
-      flex: 1 0 auto;
-      justify-content: center;
-      min-width: 110px;
+        background: white;
+        border: 1.5px solid #1e1e1e;
+        padding: 10px 28px;
+        font-weight: 600;
+        font-size: 14px;
+        border-radius: 60px;
+        cursor: pointer;
+        color: #1e1e1e;
+        transition: 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        letter-spacing: 0.2px;
+        background: #fcfcfc;
+        flex: 1 0 auto;
+        justify-content: center;
+        min-width: 110px;
     }
 
     .btn:hover {
-      background: #1e1e1e;
-      color: white;
-      border-color: #1e1e1e;
-      transform: scale(1.02);
-      box-shadow: 0 8px 16px rgba(0,0,0,0.08);
+        background: #1e1e1e;
+        color: white;
+        border-color: #1e1e1e;
+        transform: scale(1.02);
     }
 
     .btn-clear:hover {
-      background: #b22222;
-      border-color: #b22222;
-      color: white;
+        background: #b22222;
+        border-color: #b22222;
+        color: white;
     }
 
     .btn-pdf:hover {
-      background: #0b5e7c;
-      border-color: #0b5e7c;
-      color: white;
+        background: #0b5e7c;
+        border-color: #0b5e7c;
+        color: white;
     }
 
     .btn-print:hover {
-      background: #2a5c3e;
-      border-color: #2a5c3e;
-      color: white;
+        background: #2a5c3e;
+        border-color: #2a5c3e;
+        color: white;
     }
 
-    /* ----- RESPONSIVE – KEEP HEIGHT IDENTICAL ----- */
-    @media (max-width: 750px) {
-      .form-card { padding: 12px 8px 16px; }
-      .title-box { font-size: 17px; padding: 8px 4px; letter-spacing: 0.5px; }
-      .info-row { 
-        padding: 4px 8px; 
-        font-size: 13px; 
-        min-height: 40px;
-        height: 40px;
-        gap: 6px 10px;
-      }
-      .info-row .label { min-width: 90px; font-size: 13px; }
-      .info-row input { 
-        font-size: 13px; 
-        padding: 4px 6px; 
-        height: 30px;
-        min-width: 100px;
-        max-height: 30px;
-      }
-      th { font-size: 11px; padding: 6px 1px; }
-      td { padding: 2px 1px; }
-      td input { 
-        font-size: 12px; 
-        padding: 4px 1px; 
-        min-height: 28px;
-        height: 28px;
-      }
-      td .class-number { font-size: 13px; }
-      .btn { 
-        padding: 8px 16px; 
-        font-size: 13px; 
-        min-width: 80px;
-        flex: 1 0 80px;
-      }
-      .action-bar { gap: 10px; padding: 12px 14px; }
-    }
-
-    @media (max-width: 500px) {
-      .form-card { padding: 8px 4px 12px; }
-      .title-box { font-size: 15px; padding: 6px 2px; }
-      .info-row { 
-        padding: 4px 6px;
-        min-height: 38px;
-        height: 38px;
-        gap: 4px 6px;
-      }
-      .info-row .label { 
-        min-width: 70px; 
-        font-size: 11px;
-        flex-shrink: 0;
-      }
-      .info-row input { 
-        font-size: 12px; 
-        height: 28px;
-        min-width: 80px;
-        padding: 3px 4px;
-        max-height: 28px;
-      }
-      th { font-size: 10px; padding: 4px 1px; }
-      td { padding: 2px 1px; }
-      td input { 
-        font-size: 11px; 
-        padding: 3px 1px; 
-        min-height: 26px;
-        height: 26px;
-      }
-      td .class-number { font-size: 12px; }
-      .btn { 
-        padding: 7px 12px; 
-        font-size: 12px; 
-        min-width: 70px;
-        flex: 1 0 70px;
-        gap: 4px;
-      }
-      .action-bar { gap: 8px; padding: 10px 10px; }
-    }
-
-    @media (max-width: 380px) {
-      .info-row .label { min-width: 55px; font-size: 10px; }
-      .info-row input { font-size: 11px; height: 26px; min-width: 60px; max-height: 26px; }
-      .info-row { height: 34px; min-height: 34px; gap: 2px 4px; }
-    }
-
-    /* ================================================================
-       PRINT STYLES – each form on its own A4 page
-       ================================================================ */
+    /* --- PRINT STYLES – remove buttons, keep exact design --- */
     @media print {
-      body {
-        background: white;
-        padding: 0;
-        margin: 0;
-        display: block;
-        min-height: auto;
-      }
-
-      .app-wrapper {
-        max-width: 100%;
-        gap: 0;
-      }
-
-      .form-card {
-        max-width: 100%;
-        box-shadow: none;
-        border-radius: 0;
-        padding: 0.3in 0.25in;
-        margin: 0;
-        width: 100%;
-        background: white;
-        page-break-after: always;
-        page-break-inside: avoid;
-      }
-
-      .form-card:last-child {
-        page-break-after: avoid;
-      }
-
-      .action-bar {
-        display: none !important;
-      }
-
-      .table-wrapper {
-        border: 1px solid #000;
-        overflow: visible;
-      }
-
-      table {
-        font-size: 11pt;
-        width: 100%;
-        table-layout: fixed;
-        min-width: 100%;
-      }
-
-      th {
-        background: #f1f3f5 !important;
-        font-size: 11pt;
-        padding: 5px 2px;
-      }
-
-      td {
-        padding: 3px 2px;
-      }
-
-      td input {
-        border: none;
-        background: transparent;
-        font-size: 10pt;
-        padding: 3px 1px;
-        min-height: 22px;
-        height: auto;
-        box-shadow: none;
-      }
-
-      td input:focus {
-        background: transparent;
-        box-shadow: none;
-      }
-
-      .title-box {
-        font-size: 16pt;
-        padding: 8px 6px;
-        margin-bottom: 12px;
-        background: white;
-      }
-
-      .info-box {
-        margin-bottom: 12px;
-        display: block;
-      }
-
-      .info-row {
-        padding: 3px 10px;
-        font-size: 11pt;
-        min-height: 30px;
-        height: auto;
-        flex-wrap: nowrap;
-      }
-
-      .info-row input {
-        border: 1px solid #666;
-        font-size: 10pt;
-        padding: 3px 6px;
-        height: 26px;
-        background: white;
-        max-height: 26px;
-      }
-
-      .app-container, .info-box, .table-wrapper {
-        page-break-inside: avoid;
-      }
-
-      td .class-number {
-        font-size: 11pt;
-      }
-
-      .col-date     { width: 16%; }
-      .col-class    { width: 10%; }
-      .col-batch    { width: 18%; }
-      .col-muallimah{ width: 32%; }
-      .col-time     { width: 24%; }
+        body {
+            background: white;
+            padding: 0;
+            margin: 0;
+            display: block;
+            min-height: auto;
+        }
+        .page {
+            box-shadow: none;
+            padding-top: 0.4in;
+            width: 100%;
+            min-height: 100%;
+            margin: 0 auto;
+        }
+        .box {
+            margin: 0 auto 42px auto;
+        }
+        .box.second {
+            margin-bottom: 0;
+        }
+        .attendance input,
+        .info input {
+            border: none;
+            background: transparent;
+        }
+        .attendance input:focus,
+        .info input:focus {
+            background: transparent;
+        }
+        .header td {
+            background: #f1f3f5 !important;
+        }
+        .title {
+            background: #fafafa;
+        }
+        .button-bar {
+            display: none !important;
+        }
+        /* Ensure page breaks properly */
+        .page {
+            page-break-after: avoid;
+        }
     }
-  </style>
+
+    /* --- RESPONSIVE – keep it tight on small screens --- */
+    @media (max-width: 620px) {
+        body { padding: 10px 4px; }
+        .page {
+            width: 100%;
+            min-height: auto;
+            padding-top: 20px;
+        }
+        .title,
+        .box {
+            width: 100%;
+            max-width: 420px;
+        }
+        .box {
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .box.second {
+            margin-bottom: 0;
+        }
+        .date { width: 14%; }
+        .class { width: 10%; }
+        .batch { width: 14%; }
+        .muallimah { width: 32%; }
+        .time { width: 24%; }
+        .attendance td,
+        .info td,
+        .header td {
+            padding: 0 2px;
+            font-size: 9px;
+        }
+        .attendance input,
+        .info input {
+            font-size: 9px;
+        }
+        .title {
+            font-size: 12px;
+            height: 18px;
+            line-height: 18px;
+        }
+        .button-bar {
+            max-width: 100%;
+            padding: 12px 14px;
+        }
+        .btn {
+            padding: 8px 16px;
+            font-size: 12px;
+            min-width: 80px;
+        }
+    }
+
+    @media (max-width: 400px) {
+        .attendance td,
+        .info td,
+        .header td {
+            font-size: 8px;
+            padding: 0 1px;
+        }
+        .attendance input,
+        .info input {
+            font-size: 8px;
+        }
+        .title {
+            font-size: 10px;
+            height: 16px;
+            line-height: 16px;
+        }
+        .class-number {
+            font-size: 9px;
+        }
+        .box td {
+            height: 14px;
+        }
+        .header td {
+            height: 15px;
+        }
+        .attendance td {
+            height: 14px;
+        }
+        .info td {
+            height: 14px;
+        }
+        .btn {
+            padding: 6px 12px;
+            font-size: 11px;
+            min-width: 60px;
+        }
+        .button-bar {
+            gap: 8px;
+            padding: 10px 10px;
+        }
+    }
+</style>
 </head>
 <body>
 
-<div class="app-wrapper">
+<div class="page">
 
-  <!-- ============================================================
-       FORM 1 – First Subject (no subject label)
-       ============================================================ -->
-  <div class="form-card" id="form1">
-    <div class="title-box">TRAINING MUALLIMAHS CLASS ATTENDANCE</div>
-
-    <div class="info-box">
-      <div class="info-row">
-        <span class="label">• MUALLIMAH NAME:</span>
-        <input type="text" class="muallimahName" placeholder="Enter name" value="">
-      </div>
-      <div class="info-row">
-        <span class="label">• CLASS TYPE:</span>
-        <input type="text" class="classType" placeholder="e.g. Hifz, Tajweed" value="">
-      </div>
-      <div class="info-row">
-        <span class="label">• STARTING DATE:</span>
-        <input type="date" class="startingDate" value="">
-      </div>
+    <!-- ===== TITLE ===== -->
+    <div class="title">
+        TRAINING MUALLIMAHS CLASS ATTENDANCE
     </div>
 
-    <div class="table-wrapper">
-      <table>
-        <thead>
-          <tr>
-            <th class="col-date">DATE</th>
-            <th class="col-class">CLASS</th>
-            <th class="col-batch">BATCH</th>
-            <th class="col-muallimah">CLASS MUALLIMAH</th>
-            <th class="col-time">ATTEND TIME</th>
-          </tr>
-        </thead>
-        <tbody class="tableBody">
-          <!-- 12 rows injected by JavaScript -->
-        </tbody>
-      </table>
-    </div>
-  </div>
+    <!-- ===== FIRST TABLE ===== -->
+    <table class="box">
+        <tr class="info">
+            <td colspan="5">
+                • MUALLIMAH NAME:
+                <input type="text" class="muallimahName" placeholder="" style="width:auto; display:inline-block; max-width:200px;">
+            </td>
+        </tr>
+        <tr class="info">
+            <td colspan="5">
+                • CLASS TYPE:
+                <input type="text" class="classType" placeholder="" style="width:auto; display:inline-block; max-width:200px;">
+            </td>
+        </tr>
+        <tr class="info">
+            <td colspan="5">
+                • STARTING DATE:
+                <input type="date" class="startingDate" style="width:auto; display:inline-block; max-width:150px;">
+            </td>
+        </tr>
 
-  <!-- ============================================================
-       FORM 2 – Second Subject (no subject label)
-       ============================================================ -->
-  <div class="form-card" id="form2">
-    <div class="title-box">TRAINING MUALLIMAHS CLASS ATTENDANCE</div>
+        <tr class="header">
+            <td class="date">DATE</td>
+            <td class="class">CLASS</td>
+            <td class="batch">BATCH</td>
+            <td class="muallimah">CLASS MUALLIMAH</td>
+            <td class="time">ATTEND TIME</td>
+        </tr>
 
-    <div class="info-box">
-      <div class="info-row">
-        <span class="label">• MUALLIMAH NAME:</span>
-        <input type="text" class="muallimahName" placeholder="Enter name" value="">
-      </div>
-      <div class="info-row">
-        <span class="label">• CLASS TYPE:</span>
-        <input type="text" class="classType" placeholder="e.g. Hifz, Tajweed" value="">
-      </div>
-      <div class="info-row">
-        <span class="label">• STARTING DATE:</span>
-        <input type="date" class="startingDate" value="">
-      </div>
-    </div>
+        <!-- 12 rows generated by JS -->
+        <tbody class="tableBody1"></tbody>
+    </table>
 
-    <div class="table-wrapper">
-      <table>
-        <thead>
-          <tr>
-            <th class="col-date">DATE</th>
-            <th class="col-class">CLASS</th>
-            <th class="col-batch">BATCH</th>
-            <th class="col-muallimah">CLASS MUALLIMAH</th>
-            <th class="col-time">ATTEND TIME</th>
-          </tr>
-        </thead>
-        <tbody class="tableBody">
-          <!-- 12 rows injected by JavaScript -->
-        </tbody>
-      </table>
-    </div>
-  </div>
+    <!-- ===== SECOND TABLE ===== -->
+    <table class="box second">
+        <tr class="info">
+            <td colspan="5">
+                • TRAINING MUALLIMAH NAME:
+                <input type="text" class="muallimahName2" placeholder="" style="width:auto; display:inline-block; max-width:200px;">
+            </td>
+        </tr>
+        <tr class="info">
+            <td colspan="5">
+                • CLASS TYPE:
+                <input type="text" class="classType2" placeholder="" style="width:auto; display:inline-block; max-width:200px;">
+            </td>
+        </tr>
+        <tr class="info">
+            <td colspan="5">
+                • STARTING DATE:
+                <input type="date" class="startingDate2" style="width:auto; display:inline-block; max-width:150px;">
+            </td>
+        </tr>
 
-  <!-- ============================================================
-       SINGLE ACTION BAR – controls both forms
-       ============================================================ -->
-  <div class="action-bar">
-    <button class="btn btn-print" id="printBtn">🖨️ Print</button>
-    <button class="btn btn-pdf" id="pdfBtn">📄 Download PDF</button>
-    <button class="btn btn-clear" id="clearBtn">🗑️ Clear All</button>
-  </div>
+        <tr class="header">
+            <td class="date">DATE</td>
+            <td class="class">CLASS</td>
+            <td class="batch">BATCH</td>
+            <td class="muallimah">CLASS MUALLIMAH</td>
+            <td class="time">ATTEND TIME</td>
+        </tr>
+
+        <!-- 12 rows generated by JS -->
+        <tbody class="tableBody2"></tbody>
+    </table>
 
 </div>
 
-<!-- html2pdf library -->
+<!-- ===== BUTTONS ===== -->
+<div class="button-bar">
+    <button class="btn btn-print" id="printBtn">🖨️ Print</button>
+    <button class="btn btn-pdf" id="pdfBtn">📄 Download PDF</button>
+    <button class="btn btn-clear" id="clearBtn">🗑️ Clear All</button>
+</div>
+
+<!-- html2pdf library for PDF download -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <script>
-  (function() {
-    "use strict";
+    (function() {
+        "use strict";
 
-    // --------------------------------------------------------------
-    // 1. BUILD TABLE ROWS for a given tbody
-    // --------------------------------------------------------------
-    function buildTableRows(tbody) {
-      tbody.innerHTML = '';
-      for (let i = 1; i <= 12; i++) {
-        const tr = document.createElement('tr');
+        // --------------------------------------------------------------
+        // BUILD ROWS for a given tbody
+        // --------------------------------------------------------------
+        function buildRows(tbody) {
+            tbody.innerHTML = '';
+            for (let i = 1; i <= 12; i++) {
+                const tr = document.createElement('tr');
+                tr.className = 'attendance';
 
-        const tdDate = document.createElement('td');
-        const dateInput = document.createElement('input');
-        dateInput.type = 'date';
-        dateInput.dataset.row = i;
-        dateInput.dataset.field = 'date';
-        dateInput.className = 'input-date';
-        tdDate.appendChild(dateInput);
+                // DATE cell
+                const tdDate = document.createElement('td');
+                tdDate.className = 'date';
+                const dateInput = document.createElement('input');
+                dateInput.type = 'date';
+                dateInput.className = 'input-date';
+                tdDate.appendChild(dateInput);
 
-        const tdClass = document.createElement('td');
-        tdClass.innerHTML = `<span class="class-number">${i}</span>`;
+                // CLASS cell
+                const tdClass = document.createElement('td');
+                tdClass.className = 'class';
+                const span = document.createElement('span');
+                span.className = 'class-number';
+                span.textContent = i;
+                tdClass.appendChild(span);
 
-        const tdBatch = document.createElement('td');
-        const batchInput = document.createElement('input');
-        batchInput.type = 'text';
-        batchInput.placeholder = 'Batch';
-        batchInput.dataset.row = i;
-        batchInput.dataset.field = 'batch';
-        batchInput.className = 'input-batch';
-        tdBatch.appendChild(batchInput);
+                // BATCH cell
+                const tdBatch = document.createElement('td');
+                tdBatch.className = 'batch';
+                const batchInput = document.createElement('input');
+                batchInput.type = 'text';
+                batchInput.className = 'input-batch';
+                batchInput.placeholder = '';
+                tdBatch.appendChild(batchInput);
 
-        const tdMuallimah = document.createElement('td');
-        const muallimahInputRow = document.createElement('input');
-        muallimahInputRow.type = 'text';
-        muallimahInputRow.placeholder = 'Muallimah';
-        muallimahInputRow.dataset.row = i;
-        muallimahInputRow.dataset.field = 'muallimah';
-        muallimahInputRow.className = 'input-muallimah';
-        tdMuallimah.appendChild(muallimahInputRow);
+                // MUALLIMAH cell
+                const tdMuallimah = document.createElement('td');
+                tdMuallimah.className = 'muallimah';
+                const muallimahInput = document.createElement('input');
+                muallimahInput.type = 'text';
+                muallimahInput.className = 'input-muallimah';
+                muallimahInput.placeholder = '';
+                tdMuallimah.appendChild(muallimahInput);
 
-        const tdTime = document.createElement('td');
-        const timeInput = document.createElement('input');
-        timeInput.type = 'time';
-        timeInput.dataset.row = i;
-        timeInput.dataset.field = 'attendTime';
-        timeInput.className = 'input-time';
-        tdTime.appendChild(timeInput);
+                // TIME cell
+                const tdTime = document.createElement('td');
+                tdTime.className = 'time';
+                const timeInput = document.createElement('input');
+                timeInput.type = 'time';
+                timeInput.className = 'input-time';
+                tdTime.appendChild(timeInput);
 
-        tr.appendChild(tdDate);
-        tr.appendChild(tdClass);
-        tr.appendChild(tdBatch);
-        tr.appendChild(tdMuallimah);
-        tr.appendChild(tdTime);
+                tr.appendChild(tdDate);
+                tr.appendChild(tdClass);
+                tr.appendChild(tdBatch);
+                tr.appendChild(tdMuallimah);
+                tr.appendChild(tdTime);
 
-        tbody.appendChild(tr);
-      }
-    }
-
-    // --------------------------------------------------------------
-    // 2. INIT all forms
-    // --------------------------------------------------------------
-    const form1 = document.getElementById('form1');
-    const form2 = document.getElementById('form2');
-
-    const tbody1 = form1.querySelector('.tableBody');
-    const tbody2 = form2.querySelector('.tableBody');
-
-    buildTableRows(tbody1);
-    buildTableRows(tbody2);
-
-    // --------------------------------------------------------------
-    // 3. DEFAULT DATES for both forms
-    // --------------------------------------------------------------
-    function setDefaultDate(form) {
-      const today = new Date();
-      const yyyy = today.getFullYear();
-      const mm = String(today.getMonth() + 1).padStart(2, '0');
-      const dd = String(today.getDate()).padStart(2, '0');
-      const dateStr = `${yyyy}-${mm}-${dd}`;
-      const dateInput = form.querySelector('.startingDate');
-      if (dateInput && !dateInput.value) {
-        dateInput.value = dateStr;
-      }
-    }
-
-    setDefaultDate(form1);
-    setDefaultDate(form2);
-
-    // --------------------------------------------------------------
-    // 4. LOCALSTORAGE – SAVE / LOAD (both forms independently)
-    // --------------------------------------------------------------
-    const STORAGE_KEY_1 = 'attendance_form1_data';
-    const STORAGE_KEY_2 = 'attendance_form2_data';
-
-    function getFormData(form) {
-      const muallimah = form.querySelector('.muallimahName').value || '';
-      const classType = form.querySelector('.classType').value || '';
-      const startingDate = form.querySelector('.startingDate').value || '';
-
-      const rows = form.querySelectorAll('.tableBody tr');
-      const attendance = [];
-      rows.forEach((tr, idx) => {
-        const rowNum = idx + 1;
-        const dateInput = tr.querySelector('.input-date');
-        const batchInput = tr.querySelector('.input-batch');
-        const muallimahInputRow = tr.querySelector('.input-muallimah');
-        const timeInput = tr.querySelector('.input-time');
-
-        attendance.push({
-          class: rowNum,
-          date: dateInput ? dateInput.value : '',
-          batch: batchInput ? batchInput.value : '',
-          muallimah: muallimahInputRow ? muallimahInputRow.value : '',
-          attendTime: timeInput ? timeInput.value : ''
-        });
-      });
-
-      return { name: muallimah, classType, startingDate, attendance };
-    }
-
-    function setFormData(form, data) {
-      if (!data) return;
-      const nameInput = form.querySelector('.muallimahName');
-      const classInput = form.querySelector('.classType');
-      const dateInput = form.querySelector('.startingDate');
-
-      if (data.name) nameInput.value = data.name;
-      if (data.classType) classInput.value = data.classType;
-      if (data.startingDate) dateInput.value = data.startingDate;
-
-      if (Array.isArray(data.attendance) && data.attendance.length === 12) {
-        const rows = form.querySelectorAll('.tableBody tr');
-        rows.forEach((tr, idx) => {
-          const rowData = data.attendance[idx] || {};
-          const dateInputRow = tr.querySelector('.input-date');
-          const batchInput = tr.querySelector('.input-batch');
-          const muallimahInputRow = tr.querySelector('.input-muallimah');
-          const timeInput = tr.querySelector('.input-time');
-
-          if (dateInputRow) dateInputRow.value = rowData.date || '';
-          if (batchInput) batchInput.value = rowData.batch || '';
-          if (muallimahInputRow) muallimahInputRow.value = rowData.muallimah || '';
-          if (timeInput) timeInput.value = rowData.attendTime || '';
-        });
-      }
-    }
-
-    function saveAllData() {
-      const data1 = getFormData(form1);
-      const data2 = getFormData(form2);
-      localStorage.setItem(STORAGE_KEY_1, JSON.stringify(data1));
-      localStorage.setItem(STORAGE_KEY_2, JSON.stringify(data2));
-    }
-
-    function loadAllData() {
-      try {
-        const raw1 = localStorage.getItem(STORAGE_KEY_1);
-        const raw2 = localStorage.getItem(STORAGE_KEY_2);
-        if (raw1) setFormData(form1, JSON.parse(raw1));
-        if (raw2) setFormData(form2, JSON.parse(raw2));
-      } catch (_) {}
-    }
-
-    // --------------------------------------------------------------
-    // 5. AUTO-SAVE on any input change
-    // --------------------------------------------------------------
-    function attachAutoSave() {
-      // For both forms, listen to all inputs
-      document.querySelectorAll('.form-card input').forEach(el => {
-        el.addEventListener('input', saveAllData);
-        el.addEventListener('change', saveAllData);
-      });
-    }
-
-    // --------------------------------------------------------------
-    // 6. CLEAR (with confirmation + password 123)
-    // --------------------------------------------------------------
-    function clearAllData() {
-      if (!confirm('⚠️ Are you sure you want to clear ALL attendance data from BOTH forms?')) return;
-      const pwd = prompt('Enter password to clear data:');
-      if (pwd !== '123') {
-        alert('❌ Wrong Password');
-        return;
-      }
-
-      // Clear localStorage
-      localStorage.removeItem(STORAGE_KEY_1);
-      localStorage.removeItem(STORAGE_KEY_2);
-
-      // Reset all forms
-      document.querySelectorAll('.form-card').forEach(form => {
-        form.querySelectorAll('.muallimahName, .classType').forEach(el => el.value = '');
-        const dateInput = form.querySelector('.startingDate');
-        if (dateInput) {
-          const today = new Date();
-          const yyyy = today.getFullYear();
-          const mm = String(today.getMonth() + 1).padStart(2, '0');
-          const dd = String(today.getDate()).padStart(2, '0');
-          dateInput.value = `${yyyy}-${mm}-${dd}`;
+                tbody.appendChild(tr);
+            }
         }
-        form.querySelectorAll('.input-date, .input-batch, .input-muallimah, .input-time').forEach(el => {
-          el.value = '';
-        });
-      });
 
-      saveAllData();
-      alert('✅ All data cleared. Ready for new cycle.');
-    }
+        // --------------------------------------------------------------
+        // INIT both tables
+        // --------------------------------------------------------------
+        const tbody1 = document.querySelector('.tableBody1');
+        const tbody2 = document.querySelector('.tableBody2');
+        buildRows(tbody1);
+        buildRows(tbody2);
 
-    // --------------------------------------------------------------
-    // 7. PRINT (both forms, each on separate page)
-    // --------------------------------------------------------------
-    function printSheet() {
-      window.print();
-    }
+        // --------------------------------------------------------------
+        // DEFAULT DATES
+        // --------------------------------------------------------------
+        function setDefaultDate(input) {
+            if (!input) return;
+            if (input.value) return;
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            input.value = `${yyyy}-${mm}-${dd}`;
+        }
 
-    // --------------------------------------------------------------
-    // 8. PDF (html2pdf) – captures both forms
-    // --------------------------------------------------------------
-    function downloadPDF() {
-      // Get starting date from first form for filename
-      let startDate = form1.querySelector('.startingDate').value || 'no-date';
-      if (!startDate || startDate === 'no-date') {
-        const today = new Date();
-        const yyyy = today.getFullYear();
-        const mm = String(today.getMonth() + 1).padStart(2, '0');
-        const dd = String(today.getDate()).padStart(2, '0');
-        startDate = `${yyyy}-${mm}-${dd}`;
-      }
-      const fileName = `Attendance_Both_Forms_${startDate}.pdf`;
+        const date1 = document.querySelector('.startingDate');
+        const date2 = document.querySelector('.startingDate2');
+        setDefaultDate(date1);
+        setDefaultDate(date2);
 
-      const element = document.querySelector('.app-wrapper');
+        // --------------------------------------------------------------
+        // LOCALSTORAGE – SAVE / LOAD (both tables)
+        // --------------------------------------------------------------
+        const STORAGE_KEY_1 = 'attendance_table1_data';
+        const STORAGE_KEY_2 = 'attendance_table2_data';
 
-      if (typeof html2pdf === 'undefined') {
-        alert('html2pdf library not loaded. Please check internet connection.');
-        return;
-      }
+        function getTableData(tableNum) {
+            const nameInput = document.querySelector('.muallimahName' + (tableNum === 1 ? '' : '2'));
+            const classInput = document.querySelector('.classType' + (tableNum === 1 ? '' : '2'));
+            const dateInput = document.querySelector('.startingDate' + (tableNum === 1 ? '' : '2'));
 
-      const opt = {
-        margin:        [0.4, 0.3, 0.4, 0.3],
-        filename:     fileName,
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2, letterRendering: true, useCORS: true },
-        jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
-      };
+            const tbody = tableNum === 1 ? tbody1 : tbody2;
+            const rows = tbody.querySelectorAll('tr');
+            const attendance = [];
 
-      // Hide action bar temporarily
-      const actionBar = document.querySelector('.action-bar');
-      if (actionBar) actionBar.style.display = 'none';
+            rows.forEach((tr, idx) => {
+                const dateInp = tr.querySelector('.input-date');
+                const batchInp = tr.querySelector('.input-batch');
+                const muallimahInp = tr.querySelector('.input-muallimah');
+                const timeInp = tr.querySelector('.input-time');
 
-      html2pdf().set(opt).from(element).save().then(() => {
-        if (actionBar) actionBar.style.display = 'flex';
-      }).catch(() => {
-        if (actionBar) actionBar.style.display = 'flex';
-      });
-    }
+                attendance.push({
+                    class: idx + 1,
+                    date: dateInp ? dateInp.value : '',
+                    batch: batchInp ? batchInp.value : '',
+                    muallimah: muallimahInp ? muallimahInp.value : '',
+                    attendTime: timeInp ? timeInp.value : ''
+                });
+            });
 
-    // --------------------------------------------------------------
-    // 9. INIT
-    // --------------------------------------------------------------
-    function init() {
-      loadAllData();
-      // Ensure dates are set if empty
-      if (!form1.querySelector('.startingDate').value) setDefaultDate(form1);
-      if (!form2.querySelector('.startingDate').value) setDefaultDate(form2);
-      attachAutoSave();
+            return {
+                name: nameInput ? nameInput.value : '',
+                classType: classInput ? classInput.value : '',
+                startingDate: dateInput ? dateInput.value : '',
+                attendance: attendance
+            };
+        }
 
-      document.getElementById('printBtn').addEventListener('click', printSheet);
-      document.getElementById('pdfBtn').addEventListener('click', downloadPDF);
-      document.getElementById('clearBtn').addEventListener('click', clearAllData);
+        function setTableData(tableNum, data) {
+            if (!data) return;
+            const nameInput = document.querySelector('.muallimahName' + (tableNum === 1 ? '' : '2'));
+            const classInput = document.querySelector('.classType' + (tableNum === 1 ? '' : '2'));
+            const dateInput = document.querySelector('.startingDate' + (tableNum === 1 ? '' : '2'));
 
-      window.addEventListener('beforeunload', saveAllData);
-    }
+            if (nameInput && data.name) nameInput.value = data.name;
+            if (classInput && data.classType) classInput.value = data.classType;
+            if (dateInput && data.startingDate) dateInput.value = data.startingDate;
 
-    init();
-  })();
+            if (Array.isArray(data.attendance) && data.attendance.length === 12) {
+                const tbody = tableNum === 1 ? tbody1 : tbody2;
+                const rows = tbody.querySelectorAll('tr');
+                rows.forEach((tr, idx) => {
+                    const rowData = data.attendance[idx] || {};
+                    const dateInp = tr.querySelector('.input-date');
+                    const batchInp = tr.querySelector('.input-batch');
+                    const muallimahInp = tr.querySelector('.input-muallimah');
+                    const timeInp = tr.querySelector('.input-time');
+
+                    if (dateInp) dateInp.value = rowData.date || '';
+                    if (batchInp) batchInp.value = rowData.batch || '';
+                    if (muallimahInp) muallimahInp.value = rowData.muallimah || '';
+                    if (timeInp) timeInp.value = rowData.attendTime || '';
+                });
+            }
+        }
+
+        function saveAll() {
+            const data1 = getTableData(1);
+            const data2 = getTableData(2);
+            localStorage.setItem(STORAGE_KEY_1, JSON.stringify(data1));
+            localStorage.setItem(STORAGE_KEY_2, JSON.stringify(data2));
+        }
+
+        function loadAll() {
+            try {
+                const raw1 = localStorage.getItem(STORAGE_KEY_1);
+                const raw2 = localStorage.getItem(STORAGE_KEY_2);
+                if (raw1) setTableData(1, JSON.parse(raw1));
+                if (raw2) setTableData(2, JSON.parse(raw2));
+            } catch (_) {}
+        }
+
+        // --------------------------------------------------------------
+        // AUTO-SAVE on any input change
+        // --------------------------------------------------------------
+        function attachAutoSave() {
+            document.querySelectorAll('input').forEach(el => {
+                el.addEventListener('input', saveAll);
+                el.addEventListener('change', saveAll);
+            });
+        }
+
+        // --------------------------------------------------------------
+        // CLEAR ALL (with password 123)
+        // --------------------------------------------------------------
+        function clearAll() {
+            if (!confirm('⚠️ Clear ALL attendance data from BOTH tables?')) return;
+            const pwd = prompt('Enter password to clear data:');
+            if (pwd !== '123') {
+                alert('❌ Wrong Password');
+                return;
+            }
+
+            localStorage.removeItem(STORAGE_KEY_1);
+            localStorage.removeItem(STORAGE_KEY_2);
+
+            // Reset all inputs
+            document.querySelectorAll('.muallimahName, .muallimahName2, .classType, .classType2').forEach(el => el.value = '');
+            
+            // Reset dates to today
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            const dateStr = `${yyyy}-${mm}-${dd}`;
+            document.querySelector('.startingDate').value = dateStr;
+            document.querySelector('.startingDate2').value = dateStr;
+
+            // Reset all table inputs
+            document.querySelectorAll('.input-date, .input-batch, .input-muallimah, .input-time').forEach(el => {
+                el.value = '';
+            });
+
+            saveAll();
+            alert('✅ All data cleared.');
+        }
+
+        // --------------------------------------------------------------
+        // PRINT
+        // --------------------------------------------------------------
+        function printSheet() {
+            window.print();
+        }
+
+        // --------------------------------------------------------------
+        // DOWNLOAD PDF
+        // --------------------------------------------------------------
+        function downloadPDF() {
+            const element = document.querySelector('.page');
+            const dateVal = document.querySelector('.startingDate').value || 'no-date';
+            const fileName = `Attendance_${dateVal}.pdf`;
+
+            if (typeof html2pdf === 'undefined') {
+                alert('html2pdf library not loaded. Please check internet connection.');
+                return;
+            }
+
+            const opt = {
+                margin:        [0.4, 0.3, 0.4, 0.3],
+                filename:     fileName,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, letterRendering: true, useCORS: true },
+                jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+            };
+
+            // Hide buttons temporarily
+            const buttonBar = document.querySelector('.button-bar');
+            if (buttonBar) buttonBar.style.display = 'none';
+
+            html2pdf().set(opt).from(element).save().then(() => {
+                if (buttonBar) buttonBar.style.display = 'flex';
+            }).catch(() => {
+                if (buttonBar) buttonBar.style.display = 'flex';
+            });
+        }
+
+        // --------------------------------------------------------------
+        // INIT
+        // --------------------------------------------------------------
+        loadAll();
+        // Ensure dates are set if still empty after load
+        if (!document.querySelector('.startingDate').value) setDefaultDate(document.querySelector('.startingDate'));
+        if (!document.querySelector('.startingDate2').value) setDefaultDate(document.querySelector('.startingDate2'));
+        attachAutoSave();
+
+        // Button listeners
+        document.getElementById('printBtn').addEventListener('click', printSheet);
+        document.getElementById('pdfBtn').addEventListener('click', downloadPDF);
+        document.getElementById('clearBtn').addEventListener('click', clearAll);
+
+        window.addEventListener('beforeunload', saveAll);
+
+        console.log('📋 Attendance form ready. Use the buttons below to Print, Download PDF, or Clear All data.');
+    })();
 </script>
+
 </body>
 </html>
